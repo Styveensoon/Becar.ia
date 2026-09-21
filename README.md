@@ -16,7 +16,7 @@
 
 ## 🎯 ¿Qué es?
 
-Becar.ia es una app móvil (pensada para Android y Play Store) que reúne en un solo lugar becas, movilidades
+Becar.ia es una app móvil para Android, que estará disponible en Play Store, y reúne en un solo lugar becas, movilidades
 internacionales, concursos, certificaciones y otras oportunidades para estudiantes de **secundaria, prepa y
 universidad**.
 
@@ -53,106 +53,24 @@ Becar.ia las junta, las sugiere según tus intereses y te muestra cuánto tiempo
 - **UI y movimiento:** React Native Reanimated · Expo Linear Gradient · Ionicons · Poppins
 - **Calidad:** ESLint (`eslint-config-expo`) y `tsc --noEmit`
 
-## 🚀 Cómo correrlo
+## ⚙️ Cómo funciona
 
-### 1. Requisitos
+**Navegación.** Al abrir la app se revisa la sesión antes de decidir la pantalla inicial: con sesión válida se
+entra directo a Home; sin sesión, a la Landing (que lleva a registro o inicio de sesión). Ya dentro, la app se
+organiza en cuatro secciones: **Home**, **Buscador**, **Guardadas** y **Perfil**.
 
-- Node.js (LTS)
-- La app **Expo Go** en tu teléfono (misma versión de SDK que el proyecto), o un emulador de Android
+**De dónde salen las oportunidades.** Una función programada busca cada semana convocatorias con ayuda de una API
+de IA con búsqueda web, y la respuesta llega en un formato fijo (título, categoría, institución, fecha límite,
+monto, requisitos y URL de la fuente), nunca como texto libre sin respaldo. Todo entra como *pendiente de validar*:
+una persona del equipo lo revisa **campo por campo contra la fuente citada** y lo publica o lo rechaza. Los
+usuarios solo ven lo publicado.
 
-### 2. Instalar
+**Sugerencias.** Cada oportunidad publicada recibe un puntaje según los intereses y el nivel educativo del
+usuario, comparados con su categoría, institución y requisitos. Las de mayor puntaje alimentan la sección de
+sugerencias de Home.
 
-```bash
-git clone https://github.com/Styveensoon/Becar.ia.git
-cd Becar.ia
-npm install
-```
-
-> El repo incluye un `.npmrc` con `legacy-peer-deps=true` porque hay un conflicto de peers entre `react` y
-> `react-dom` que hace fallar `npx expo install` sin esa opción.
-
-### 3. Variables de entorno
-
-Copia el ejemplo y pon las claves de tu proyecto de Supabase:
-
-```bash
-cp .env.example .env
-```
-
-```env
-EXPO_PUBLIC_SUPABASE_URL=https://TU-PROYECTO.supabase.co
-EXPO_PUBLIC_SUPABASE_ANON_KEY=tu-anon-key
-```
-
-El `.env` está en `.gitignore`: **nunca** se sube al repo ni se escribe una clave en el código.
-
-### 4. Arrancar
-
-```bash
-npx expo start --clear
-```
-
-Escanea el QR con Expo Go, o pulsa `a` para abrir el emulador de Android.
-
-## 🔐 Configurar Supabase
-
-En el panel de tu proyecto de Supabase:
-
-1. **Authentication → Providers → Email:** activa **Confirm email** (la cuenta no se considera activa hasta verificar).
-2. **Authentication → Providers → Google:** actívalo con tus credenciales de OAuth.
-3. **Authentication → URL Configuration → Redirect URLs:** agrega `becaria://login`.
-4. Crea la tabla `profiles` con RLS y el trigger que la llena al registrarse (referencia abajo).
-
-<details>
-<summary><b>SQL de referencia para <code>profiles</code></b></summary>
-
-```sql
-create table public.profiles (
-  id              uuid primary key references auth.users (id) on delete cascade,
-  mote            text,
-  rango_edad      text check (rango_edad in ('13-15', '16-17', '18+')),
-  nivel_educativo text check (nivel_educativo in ('secundaria', 'prepa', 'universidad')),
-  avatar_id       text,
-  intereses       text[] not null default '{}',
-  created_at      timestamptz not null default now()
-);
-
--- RLS desde que se crea la tabla
-alter table public.profiles enable row level security;
-
-create policy "Cada quien lee su perfil"
-  on public.profiles for select using (auth.uid() = id);
-
-create policy "Cada quien edita su perfil"
-  on public.profiles for update using (auth.uid() = id);
-
--- El registro manda mote, rango_edad y nivel_educativo como metadata.
--- Quien entra con Google no los trae: quedan en null hasta completar su perfil.
-create function public.handle_new_user()
-returns trigger
-language plpgsql
-security definer set search_path = public
-as $$
-begin
-  insert into public.profiles (id, mote, rango_edad, nivel_educativo)
-  values (
-    new.id,
-    new.raw_user_meta_data ->> 'mote',
-    new.raw_user_meta_data ->> 'rango_edad',
-    new.raw_user_meta_data ->> 'nivel_educativo'
-  );
-  return new;
-end;
-$$;
-
-create trigger on_auth_user_created
-  after insert on auth.users
-  for each row execute function public.handle_new_user();
-```
-
-Es un punto de partida, no el esquema final.
-
-</details>
+**Fechas límite.** Cada tarjeta muestra cuánto falta para aplicar con un color: verde si queda tiempo, ámbar si
+faltan de 3 a 7 días y rojo si vence en menos de 3.
 
 ## 📁 Estructura
 
@@ -196,23 +114,12 @@ La audiencia es mixta (13-17 y 18+), así que estas reglas no son opcionales:
 - Se puede **borrar la cuenta y sus datos** desde la app y desde un link web.
 - El Aviso de Privacidad es accesible sin iniciar sesión.
 
-## 🧪 Comandos útiles
-
-```bash
-npx expo start --clear     # servidor de desarrollo con caché limpia
-npx expo lint              # lint
-npx tsc --noEmit           # typecheck
-npx expo-doctor            # diagnóstico de dependencias
-```
-
-Antes de dar una tarea por terminada se corren lint y typecheck.
-
-## 🤝 Contribuir
+## 🧱 Convenciones de código
 
 - Componentes reutilizables en `src/components/`, uno por archivo y con el nombre del archivo igual al del
   componente.
 - Props tipadas con TypeScript, sin `any` salvo con un comentario que lo justifique.
-- Dependencias nuevas con `npx expo install <paquete>` para resolver versiones compatibles con el SDK.
+- Antes de dar una tarea por terminada se corren lint y typecheck.
 
 ---
 
