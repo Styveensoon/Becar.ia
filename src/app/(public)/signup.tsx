@@ -7,29 +7,15 @@ import { Button } from '@/components/Button';
 import { Checkbox } from '@/components/Checkbox';
 import { Chip } from '@/components/Chip';
 import { ErrorBanner } from '@/components/ErrorBanner';
-import { GoogleButton } from '@/components/GoogleButton';
 import { Input } from '@/components/Input';
-import { OrDivider } from '@/components/OrDivider';
 import { Reveal } from '@/components/Reveal';
+import { esMenorDeEdad, MAX_MOTE, nivelesEducativos, rangosEdad } from '@/constants/personalizacion';
 import { colors, typography } from '@/constants/theme';
 import {
-  signInWithGoogle,
   signUpWithEmail,
   type NivelEducativo,
   type RangoEdad,
 } from '@/lib/authActions';
-
-const RANGOS: { value: RangoEdad; label: string }[] = [
-  { value: '13-15', label: '13-15' },
-  { value: '16-17', label: '16-17' },
-  { value: '18+', label: '18+' },
-];
-
-const NIVELES: { value: NivelEducativo; label: string }[] = [
-  { value: 'secundaria', label: 'Secundaria' },
-  { value: 'prepa', label: 'Prepa' },
-  { value: 'universidad', label: 'Universidad' },
-];
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -41,19 +27,29 @@ export default function Signup() {
   const [rango, setRango] = useState<RangoEdad | null>(null);
   const [nivel, setNivel] = useState<NivelEducativo | null>(null);
   const [accepted, setAccepted] = useState(false);
+  const [tutor, setTutor] = useState(false);
 
   const [touched, setTouched] = useState({ email: false, password: false, confirm: false, mote: false });
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
 
   const emailValid = EMAIL_REGEX.test(email.trim());
   const passwordValid = password.length >= 8;
   const confirmValid = confirm.length > 0 && confirm === password;
   const moteValid = mote.trim().length > 0;
 
+  // 13-17: la LFPDPPP exige el consentimiento de quien ejerce la patria potestad o tutela.
+  const esMenor = esMenorDeEdad(rango);
+
   const canSubmit =
-    emailValid && passwordValid && confirmValid && moteValid && rango !== null && nivel !== null && accepted;
+    emailValid &&
+    passwordValid &&
+    confirmValid &&
+    moteValid &&
+    rango !== null &&
+    nivel !== null &&
+    accepted &&
+    (!esMenor || tutor);
 
   const touch = (field: keyof typeof touched) => setTouched((t) => ({ ...t, [field]: true }));
 
@@ -67,6 +63,7 @@ export default function Signup() {
       mote,
       rangoEdad: rango,
       nivelEducativo: nivel,
+      consentimientoTutor: esMenor && tutor,
     });
     setSubmitting(false);
 
@@ -75,16 +72,8 @@ export default function Signup() {
       return;
     }
     if (result.needsVerification) {
-      router.replace('/verificar-correo');
+      router.replace({ pathname: '/verificar-correo', params: { email: email.trim() } });
     }
-  };
-
-  const onGoogle = async () => {
-    setError(null);
-    setGoogleLoading(true);
-    const result = await signInWithGoogle();
-    setGoogleLoading(false);
-    if (!result.ok && result.message) setError(result.message);
   };
 
   return (
@@ -139,6 +128,7 @@ export default function Signup() {
           <Input
             label="¿Cómo quieres que te llamen?"
             autoCorrect={false}
+            maxLength={MAX_MOTE}
             value={mote}
             onChangeText={setMote}
             onBlur={() => touch('mote')}
@@ -152,24 +142,22 @@ export default function Signup() {
           <View>
             <Text style={styles.groupLabel}>¿Cuál es tu rango de edad?</Text>
             <View style={styles.chips} accessibilityRole="radiogroup">
-              {RANGOS.map((r) => (
+              {rangosEdad.map((r) => (
                 <Chip key={r.value} label={r.label} selected={rango === r.value} onPress={() => setRango(r.value)} />
               ))}
             </View>
           </View>
-
         </Reveal>
 
         <Reveal step={6}>
           <View>
             <Text style={styles.groupLabel}>¿En qué nivel estás?</Text>
             <View style={styles.chips} accessibilityRole="radiogroup">
-              {NIVELES.map((n) => (
+              {nivelesEducativos.map((n) => (
                 <Chip key={n.value} label={n.label} selected={nivel === n.value} onPress={() => setNivel(n.value)} />
               ))}
             </View>
           </View>
-
         </Reveal>
       </View>
 
@@ -190,6 +178,19 @@ export default function Signup() {
             </Link>
           </Text>
         </Checkbox>
+        {esMenor && (
+          <View style={styles.tutor}>
+            <Checkbox
+              checked={tutor}
+              onToggle={() => setTutor((t) => !t)}
+              accessibilityLabel="Mi madre, padre o tutor conoce y autoriza que use Becar.ia"
+            >
+              <Text style={styles.termsText}>
+                Mi madre, padre o tutor conoce y autoriza que use Becar.ia y el tratamiento de mis datos
+              </Text>
+            </Checkbox>
+          </View>
+        )}
       </Reveal>
 
       <Reveal step={8} style={styles.action}>
@@ -202,17 +203,12 @@ export default function Signup() {
       </Reveal>
 
       <Reveal step={9}>
-        <OrDivider />
-        <GoogleButton onPress={onGoogle} loading={googleLoading} />
-      </Reveal>
-
-      <Reveal step={10}>
-      <Text style={styles.footer}>
-        ¿Ya tienes cuenta?{' '}
-        <Link href="/login" replace style={styles.footerAction}>
-          Iniciar sesión
-        </Link>
-      </Text>
+        <Text style={styles.footer}>
+          ¿Ya tienes cuenta?{' '}
+          <Link href="/login" replace style={styles.footerAction}>
+            Iniciar sesión
+          </Link>
+        </Text>
       </Reveal>
     </AuthScreen>
   );
@@ -245,6 +241,9 @@ const styles = StyleSheet.create({
   terms: {
     marginTop: 24,
   },
+  tutor: {
+    marginTop: 12,
+  },
   termsText: {
     ...typography.caption,
     color: colors.textMuted,
@@ -255,7 +254,7 @@ const styles = StyleSheet.create({
     textDecorationLine: 'underline',
   },
   action: {
-    marginTop: 20,
+    marginTop: 24,
   },
   banner: {
     marginBottom: 12,
@@ -264,7 +263,7 @@ const styles = StyleSheet.create({
     ...typography.body,
     color: colors.textMuted,
     textAlign: 'center',
-    marginTop: 24,
+    marginTop: 32,
   },
   footerAction: {
     ...typography.bodyMedium,

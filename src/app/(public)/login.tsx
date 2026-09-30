@@ -1,23 +1,20 @@
-import { Link } from 'expo-router';
+import { Link, router } from 'expo-router';
 import { useState } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { AuthScreen } from '@/components/AuthScreen';
 import { Button } from '@/components/Button';
 import { ErrorBanner } from '@/components/ErrorBanner';
-import { GoogleButton } from '@/components/GoogleButton';
 import { Input } from '@/components/Input';
-import { OrDivider } from '@/components/OrDivider';
 import { Reveal } from '@/components/Reveal';
 import { colors, typography } from '@/constants/theme';
-import { sendPasswordReset, signInWithEmail, signInWithGoogle } from '@/lib/authActions';
+import { signInWithEmail } from '@/lib/authActions';
 
 export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [googleLoading, setGoogleLoading] = useState(false);
 
   const canSubmit = email.trim().length > 0 && password.length > 0;
 
@@ -35,29 +32,17 @@ export default function Login() {
     setSubmitting(true);
     const result = await signInWithEmail(email, password);
     setSubmitting(false);
+    if (!result.ok && result.sinConfirmar) {
+      // Cuenta creada pero sin confirmar: se le manda un código nuevo y se pide ahí mismo.
+      router.push({ pathname: '/verificar-correo', params: { email: email.trim(), reenviar: '1' } });
+      return;
+    }
     if (!result.ok) setError(result.message);
     // Con sesión válida el guard del layout raíz lleva a Home solo.
   };
 
-  const onGoogle = async () => {
-    setGoogleLoading(true);
-    const result = await signInWithGoogle();
-    setGoogleLoading(false);
-    if (!result.ok && result.message) setError(result.message);
-  };
-
-  const onForgotPassword = async () => {
-    if (!email.trim()) {
-      setError('Escribe tu correo arriba para enviarte el enlace');
-      return;
-    }
-    const result = await sendPasswordReset(email);
-    if (result.ok) {
-      Alert.alert('Revisa tu correo', 'Te enviamos un enlace para restablecer tu contraseña.');
-    } else {
-      setError(result.message);
-    }
-  };
+  // Recuperación con código por correo; se lleva el correo si ya lo escribió.
+  const onForgotPassword = () => router.push({ pathname: '/recuperar', params: { email: email.trim() } });
 
   return (
     <AuthScreen icon="log-in-outline">
@@ -111,17 +96,12 @@ export default function Login() {
       </Reveal>
 
       <Reveal step={4}>
-        <OrDivider />
-        <GoogleButton onPress={onGoogle} loading={googleLoading} />
-      </Reveal>
-
-      <Reveal step={5}>
-      <Text style={styles.footer}>
-        ¿No tienes cuenta?{' '}
-        <Link href="/signup" replace style={styles.footerAction}>
-          Crear cuenta
-        </Link>
-      </Text>
+        <Text style={styles.footer}>
+          ¿No tienes cuenta?{' '}
+          <Link href="/signup" replace style={styles.footerAction}>
+            Crear cuenta
+          </Link>
+        </Text>
       </Reveal>
     </AuthScreen>
   );
@@ -148,7 +128,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   action: {
-    marginTop: 24,
+    marginTop: 32,
   },
   banner: {
     marginBottom: 12,
@@ -157,7 +137,7 @@ const styles = StyleSheet.create({
     ...typography.body,
     color: colors.textMuted,
     textAlign: 'center',
-    marginTop: 24,
+    marginTop: 32,
   },
   footerAction: {
     ...typography.bodyMedium,

@@ -52,7 +52,9 @@ profiles
   rango_edad      text            -- '13-15' | '16-17' | '18+'
   nivel_educativo text            -- 'secundaria' | 'prepa' | 'universidad'
   avatar_id       text            -- referencia a un set predefinido, no upload de foto
+  color           text            -- uno de los 6 tokens profile-* (ver design system §1)
   intereses       text[]
+  institucion     text nullable   -- opcional, nombre exacto de la escuela. RLS, nunca en logs/analytics
   created_at      timestamptz
 
 fuentes
@@ -189,6 +191,19 @@ neumorphism). Formas redondeadas, color sólido, una sola sombra ligera por tarj
 **Regla de convivencia:** `primary` para fondos de acción. `primary-text` para texto/links en
 naranja. `secondary` para estructura y texto. `accent` con moderación. `danger` reservado
 estrictamente para urgencia de fecha.
+
+### Colores de perfil (independientes de marca y de semánticos)
+
+Solo para el fondo del avatar en personalización, no usar en ningún otro contexto de la UI.
+
+| Token | Hex |
+|---|---|
+| `profile-orange` | `#FF7A33` |
+| `profile-yellow` | `#FFC145` |
+| `profile-green` | `#6BC28C` |
+| `profile-blue` | `#5B9BD5` |
+| `profile-pink` | `#F2789A` |
+| `profile-purple` | `#9B8AE0` |
 
 ## 2. Tipografía
 

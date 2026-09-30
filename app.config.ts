@@ -10,8 +10,11 @@ const config: ExpoConfig = {
   userInterfaceStyle: 'light',
   ios: {
     supportsTablet: true,
+    bundleIdentifier: 'mx.becaria.app',
   },
   android: {
+    // Identificador en Play Store: NO se puede cambiar después de la primera publicación.
+    package: 'mx.becaria.app',
     adaptiveIcon: {
       backgroundColor: '#E6F4FE',
       foregroundImage: './assets/android-icon-foreground.png',
@@ -23,13 +26,23 @@ const config: ExpoConfig = {
   web: {
     favicon: './assets/favicon.png',
   },
-  plugins: ['expo-router', 'expo-secure-store', 'expo-web-browser', 'expo-font'],
+  plugins: [
+    'expo-router',
+    'expo-secure-store',
+    'expo-web-browser',
+    'expo-font',
+    // Solo notificaciones locales (recordatorios de cierre); sin push ni alarmas exactas.
+    ['expo-notifications', { color: '#FF7A33', icon: './assets/notification-icon.png' }],
+  ],
   experiments: {
     typedRoutes: true,
   },
+  owner: 'styveensoon',
   extra: {
     supabaseUrl: process.env.EXPO_PUBLIC_SUPABASE_URL,
     supabaseAnonKey: process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY,
+    // Proyecto en EAS (builds en la nube). Es un identificador, no un secreto.
+    eas: { projectId: 'ebade86e-218e-4fd9-8947-45190bdbe715' },
   },
 };
 

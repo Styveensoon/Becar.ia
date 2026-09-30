@@ -17,9 +17,11 @@ type ChipProps = {
   label: string;
   selected: boolean;
   onPress: () => void;
+  // Opción que no se puede elegir (se ve atenuada y no responde).
+  disabled?: boolean;
 };
 
-export function Chip({ label, selected, onPress }: ChipProps) {
+export function Chip({ label, selected, onPress, disabled = false }: ChipProps) {
   const progress = useSharedValue(selected ? 1 : 0);
   const scale = useSharedValue(1);
 
@@ -44,7 +46,9 @@ export function Chip({ label, selected, onPress }: ChipProps) {
   return (
     <Pressable
       accessibilityRole="radio"
-      accessibilityState={{ selected }}
+      accessibilityState={{ selected, disabled }}
+      disabled={disabled}
+      style={disabled && styles.disabled}
       onPress={() => {
         Haptics.selectionAsync();
         onPress();
@@ -67,5 +71,8 @@ const styles = StyleSheet.create({
   },
   label: {
     ...typography.captionMedium,
+  },
+  disabled: {
+    opacity: 0.4,
   },
 });

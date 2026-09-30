@@ -9,8 +9,9 @@ Repo: https://github.com/Styveensoon/Becar.ia (rama `main`).
 ## 1. Qué está hecho
 
 - **Landing** (`src/app/(public)/landing.tsx`): carrusel de 4 ilustraciones con parallax, flotación, autoavance de 4 s, panel blanco fijo con marca, dots, leyenda animada, botón "Quiero unirme" y link "Iniciar sesión".
-- **Login / Signup / Verificar correo** (`src/app/(public)/`): correo + contraseña, Google OAuth, recuperación de contraseña, chips de rango de edad y nivel educativo, checkbox de términos.
+- **Login / Signup / Verificar correo** (`src/app/(public)/`): correo + contraseña (el inicio con Google se eliminó), recuperación de contraseña, chips de rango de edad y nivel educativo, checkbox de términos.
 - **Ruteo por sesión** (`src/app/_layout.tsx`): `Stack.Protected` con `guard={!session}` para `(public)` y `guard={!!session}` para `(app)`. `terminos` y `privacidad` quedan fuera de los guards (accesibles siempre). `src/app/index.tsx` redirige a `/home` o `/landing`.
+- **Onboarding de personalización** (`(app)/onboarding-avatar.tsx` y `onboarding-intereses.tsx`, spec en `md/personalizacion.md`): paso 1 avatar + color (abanico), paso 2 intereses + institución opcional. Se activa con un guard en `(app)/_layout.tsx` (`ProfileProvider` en `src/lib/profile.tsx`): mientras el perfil no tenga `avatar_id` e `intereses`, solo existen esas pantallas; al guardar, `setProfile` hace que Home pase a ser la ruta activa. Los **12 avatares son placeholders con Ionicons** (`src/constants/personalizacion.ts`): falta reemplazarlos por las ilustraciones reales. Requiere columnas `color` e `institucion` en `profiles` y política RLS de UPDATE sobre la fila propia. Sin probar contra Supabase real.
 - **Home** (`(app)/home.tsx`): solo un placeholder con botón de cerrar sesión.
 - **Términos y Privacidad**: pantallas con texto **placeholder** (`LegalScreen`), no es texto legal real.
 - **Supabase Auth** conectado en código (`src/lib/supabase.ts`, `auth.tsx`, `authActions.ts`).
@@ -22,19 +23,17 @@ Repo: https://github.com/Styveensoon/Becar.ia (rama `main`).
 - Tab navigator (hoy `(app)` solo tiene `home`).
 - Pipeline semanal de oportunidades (Edge Function + IA + validación humana) y motor de sugerencias.
 - Borrado de cuenta desde la app y desde un link web (requisito de Play Store).
-- **Onboarding para usuarios de Google**: entran sin pasar por Signup, así que `mote`, `rango_edad` y `nivel_educativo` quedan `null`. Falta una pantalla que los pida.
 - Texto legal real de Términos y Aviso de Privacidad.
 - Capturas de pantalla en el README.
 
 ## 3. Configuración externa pendiente (no vive en el repo)
 
-El código asume esto, pero hay que hacerlo en el panel de Supabase / Google:
+El código asume esto, pero hay que hacerlo en el panel de Supabase:
 
 1. Llenar `.env` con `EXPO_PUBLIC_SUPABASE_URL` y `EXPO_PUBLIC_SUPABASE_ANON_KEY` (hoy tiene valores placeholder; `.env` está en `.gitignore`, `.env.example` sí se sube). `app.config.ts` los lee en `extra`; `src/lib/supabase.ts` lanza error si faltan.
 2. Tabla `profiles` con **RLS** + un **trigger** en `auth.users` que cree la fila leyendo `raw_user_meta_data` (`mote`, `rango_edad`, `nivel_educativo`). El signup manda esos datos como `options.data` y **espera** ese trigger; sin él, el perfil no se crea.
 3. Activar "Confirm email" en Auth.
-4. Habilitar el proveedor Google.
-5. Agregar `becaria://login` a las Redirect URLs.
+4. Agregar `becaria://login` a las Redirect URLs.
 
 **Nunca se verificó el flujo de auth contra un Supabase real**: solo pasaron `tsc`, `lint` y `expo export`.
 
@@ -46,7 +45,6 @@ El código asume esto, pero hay que hacerlo en el panel de Supabase / Google:
 - **Tokens de diseño** en `src/constants/theme.ts` (colores, fuentes, tipografía, spacing, radius, `cardShadow`). Usarlos siempre, no hex sueltos.
 - **Reglas de diseño que se respetan**: plano, una sola sombra, sin gradientes en botones/cards, texto sobre `primary` en navy (`secondary`), `primary-text` para texto naranja, rojo solo para urgencia de fecha.
 - **Sesión**: SecureStore con adaptador por **chunks** (1800 caracteres, clave `${key}.count`) porque SecureStore limita el tamaño por valor.
-- **Google OAuth**: `expo-web-browser` + PKCE con `exchangeCodeForSession`; el código se saca con `Linking.parse(result.url).queryParams?.code`.
 - **Commits**: terminan con la línea `Co-Authored-By` que indique el sistema.
 
 ## 5. Trampas (lo que más costó)
@@ -111,5 +109,4 @@ La ilustración manda dónde empieza el panel blanco:
 
 1. Terminar la config externa de Supabase (sección 3) y probar signup/login reales.
 2. Tab navigator con las 4 secciones y Home real.
-3. Onboarding para usuarios de Google.
-4. Borrar cuenta (app + link web) antes de cualquier publicación.
+3. Borrar cuenta (app + link web) antes de cualquier publicación.

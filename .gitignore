@@ -42,3 +42,9 @@ yarn-error.*
 
 # env
 .env
+
+# credenciales locales de prueba (nunca al repo)
+credentials.md
+
+# Archivos internos del CLI de Supabase
+supabase/.temp/

@@ -43,6 +43,8 @@ function RootNavigator() {
       {/* Accesibles con o sin sesión (requisito de Play Store) */}
       <Stack.Screen name="terminos" />
       <Stack.Screen name="privacidad" />
+      {/* Recuperar contraseña con código: al validarlo se crea sesión y la pantalla debe seguir. */}
+      <Stack.Screen name="recuperar" />
     </Stack>
   );
 }

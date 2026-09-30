@@ -1,10 +1,13 @@
 import { LegalScreen } from '@/components/LegalScreen';
-
-// TODO: reemplazar con el texto legal definitivo.
-const BODY =
-  'Aquí irán los Términos y Condiciones de Becar.ia. Este texto es un marcador de posición ' +
-  'mientras el equipo redacta la versión definitiva.';
+import { LEGAL_FECHA, TERMINOS } from '@/constants/legal';
 
 export default function Terminos() {
-  return <LegalScreen title="Términos y Condiciones" body={BODY} />;
+  return (
+    <LegalScreen
+      title="Términos y Condiciones"
+      updated={LEGAL_FECHA}
+      intro="Léelos con calma: explican qué es Becar.ia, qué puedes esperar de la App y qué te pedimos a cambio. Es corto y sin letras chiquitas."
+      sections={TERMINOS}
+    />
+  );
 }
