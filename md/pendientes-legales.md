@@ -5,11 +5,22 @@ salen de ahí).
 
 ## Pendiente
 
-1. **Activar GitHub Pages** (una sola vez): GitHub → repo → Settings → Pages → "Deploy from a
-   branch" → rama y carpeta `/docs`. Queda en https://styveensoon.github.io/Becar.ia/
-
-Cerrados por decisión del equipo (2026-09-30): revisión profesional externa y rotación de la
+Nada. Cerrados por decisión del equipo (2026-09-30): revisión profesional externa y rotación de la
 contraseña de aplicación de Gmail.
+
+## Web pública (GitHub Pages, rama `gh-pages`)
+
+- https://styveensoon.github.io/Becar.ia/privacidad.html (política de privacidad para Play)
+- https://styveensoon.github.io/Becar.ia/eliminar-cuenta.html (eliminación de cuenta para Play)
+- https://styveensoon.github.io/Becar.ia/terminos.html
+
+Cómo actualizarla después de cambiar `src/constants/legal.ts`:
+```bash
+node --experimental-strip-types scripts/generar-legal-web.mjs   # regenera docs/
+git add docs && git commit -m "Actualiza textos legales"
+git subtree split --prefix docs -b gh-pages-nuevo && git push -f origin gh-pages-nuevo:gh-pages && git branch -D gh-pages-nuevo
+```
+GitHub la vuelve a publicar sola en menos de un minuto.
 
 ## Resuelto
 
