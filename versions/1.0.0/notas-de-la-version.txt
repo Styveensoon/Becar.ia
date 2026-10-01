@@ -1,0 +1,6 @@
+<es-419>
+Primera versión de Becar.ia:
+• Becas, concursos, movilidades y certificaciones para estudiantes en un solo lugar
+• Sugerencias según tu nivel y tus intereses
+• Favoritos, calendario de fechas límite y avisos 7, 3 y 1 día antes
+</es-419>

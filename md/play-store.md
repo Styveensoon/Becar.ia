@@ -11,7 +11,7 @@ datos nuevos (analytics, crash reporting, anuncios, push remotas), hay que actua
 | URL para eliminar la cuenta | https://styveensoon.github.io/Becar.ia/eliminar-cuenta.html |
 | Correo de contacto | becar.ia.mx@gmail.com |
 | ¿Contiene anuncios? | **No** |
-| ID de la app | `mx.becaria.app` (definitivo después de la primera subida) |
+| ID de la app | `com.styveenrizo.becaria` (el que tiene registrado Play Console; no se puede cambiar) |
 
 ## Acceso a la app (App access)
 

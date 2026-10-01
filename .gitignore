@@ -55,3 +55,7 @@ supabase/.temp/
 /store/play/video/fuente/
 # Pista de música en WAV (12 MB; se regenera igual con store/play/video/musica.py)
 /store/play/video/musica.wav
+
+# Builds de Android (pesados; se descargan de EAS)
+*.aab
+*.apk

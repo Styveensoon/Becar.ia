@@ -10,11 +10,11 @@ const config: ExpoConfig = {
   userInterfaceStyle: 'light',
   ios: {
     supportsTablet: true,
-    bundleIdentifier: 'mx.becaria.app',
+    bundleIdentifier: 'com.styveenrizo.becaria',
   },
   android: {
     // Identificador en Play Store: NO se puede cambiar después de la primera publicación.
-    package: 'mx.becaria.app',
+    package: 'com.styveenrizo.becaria',
     adaptiveIcon: {
       backgroundColor: '#FFFFFF',
       foregroundImage: './assets/android-icon-foreground.png',

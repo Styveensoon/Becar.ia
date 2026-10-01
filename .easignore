@@ -57,3 +57,6 @@ scripts/
 
 # Material de Play Store (capturas, gráfico destacado): no va en el build
 /store
+
+# Builds descargados y notas de versión: no van dentro del build
+/versions

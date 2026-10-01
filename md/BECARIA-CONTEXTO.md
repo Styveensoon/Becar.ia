@@ -38,7 +38,7 @@ de datos para menores (sección 7).
 | Builds | EAS Build (perfiles development / preview / production `.aab`) |
 | Web pública | GitHub Pages desde la carpeta `docs/` (privacidad, términos, eliminar cuenta) |
 
-ID de la app: `mx.becaria.app`. Claves de Supabase por variables de entorno (`.env` +
+ID de la app: `com.styveenrizo.becaria`. Claves de Supabase por variables de entorno (`.env` +
 `app.config.ts`), nunca en el código.
 
 ---
