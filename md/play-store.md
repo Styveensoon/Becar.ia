@@ -66,6 +66,8 @@ Notas para no equivocarse:
       (`node --experimental-strip-types scripts/generar-legal-web.mjs`).
 - [ ] Publicar `docs/` en GitHub Pages y comprobar que las dos URLs abren sin iniciar sesión.
 - [ ] Build de producción: `npx eas-cli build -p android --profile production` (genera el `.aab`).
-- [ ] Capturas de pantalla (mínimo 2, recomendado 4-8), ícono 512×512 y gráfico destacado 1024×500.
+- [x] Capturas de pantalla (8, 1080×1920), ícono 512×512 y gráfico destacado 1024×500: todo en
+      `store/play/` (`capturas/01-08.png`, `icono-512.png`, `grafico-destacado.png`). Se regeneran con
+      `python store/play/componer.py` a partir de las capturas crudas de `store/play/fuente/`.
 - [ ] Borrar las cuentas de prueba que no se usen (`pruebas@`, `styveen.emiliano+becaria-test@`);
       dejar `revision.play@` y las de validación.

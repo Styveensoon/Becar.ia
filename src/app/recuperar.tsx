@@ -1,6 +1,6 @@
 import { router, useLocalSearchParams } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 
 import { AuthScreen } from '@/components/AuthScreen';
 import { Button } from '@/components/Button';
@@ -34,6 +34,7 @@ export default function Recuperar() {
   const [error, setError] = useState<string | null>(null);
   const [cargando, setCargando] = useState(false);
   const [espera, setEspera] = useState(0);
+  const scrollRef = useRef<ScrollView>(null);
 
   // Cuenta regresiva para volver a pedir el código (evita saturar el envío de correos).
   useEffect(() => {
@@ -89,7 +90,7 @@ export default function Recuperar() {
   const numero = { correo: 1, codigo: 2, contrasena: 3, listo: 3 }[paso];
 
   return (
-    <AuthScreen icon="key-outline">
+    <AuthScreen icon="key-outline" scrollRef={scrollRef}>
       <ProgressBar step={numero} total={3} />
 
       {paso === 'correo' && (
@@ -120,7 +121,7 @@ export default function Recuperar() {
             Si hay una cuenta con <Text style={styles.strong}>{email.trim()}</Text>, te llegó un código de{' '}
             {LONGITUD_CODIGO} dígitos. Revisa también spam.
           </Text>
-          <CodeInput value={codigo} onChange={setCodigo} onComplete={verificar} error={!!error} />
+          <CodeInput value={codigo} onChange={setCodigo} onComplete={verificar} error={!!error} scrollRef={scrollRef} />
           {error && <ErrorBanner message={error} />}
           <Button label="Verificar código" disabled={codigo.length !== LONGITUD_CODIGO} loading={cargando} onPress={() => verificar()} />
           <Button

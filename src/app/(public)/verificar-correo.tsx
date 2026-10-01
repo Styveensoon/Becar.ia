@@ -1,7 +1,7 @@
 import { Ionicons } from '@expo/vector-icons';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useEffect, useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useEffect, useRef, useState } from 'react';
+import { KeyboardAvoidingView, ScrollView, StyleSheet, Text, View } from 'react-native';
 import Animated, { FadeInUp, ZoomIn } from 'react-native-reanimated';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -25,6 +25,7 @@ export default function VerificarCorreo() {
   const [aviso, setAviso] = useState<string | null>(null);
   const [cargando, setCargando] = useState(false);
   const [espera, setEspera] = useState(ESPERA_REENVIO_S);
+  const scrollRef = useRef<ScrollView>(null);
 
   useEffect(() => {
     if (espera <= 0) return;
@@ -68,8 +69,10 @@ export default function VerificarCorreo() {
   };
 
   return (
-    <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
+    // 'padding' también en Android: con edge-to-edge el teclado ya no encoge la ventana.
+    <KeyboardAvoidingView style={styles.flex} behavior="padding">
       <ScrollView
+        ref={scrollRef}
         style={styles.flex}
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={[
@@ -95,7 +98,7 @@ export default function VerificarCorreo() {
         </View>
 
         <View style={styles.form}>
-          <CodeInput value={codigo} onChange={setCodigo} onComplete={verificar} error={!!error} />
+          <CodeInput value={codigo} onChange={setCodigo} onComplete={verificar} error={!!error} scrollRef={scrollRef} />
           {error && <ErrorBanner message={error} />}
           {aviso && !error && <Text style={styles.aviso}>{aviso}</Text>}
           <Button label="Confirmar cuenta" disabled={codigo.length !== LONGITUD_CODIGO} loading={cargando} onPress={() => verificar()} />

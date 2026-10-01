@@ -54,3 +54,6 @@ img/
 !README.md
 docs/
 scripts/
+
+# Material de Play Store (capturas, gráfico destacado): no va en el build
+/store

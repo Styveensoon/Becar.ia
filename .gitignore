@@ -48,3 +48,8 @@ credentials.md
 
 # Archivos internos del CLI de Supabase
 supabase/.temp/
+
+# Temporales del video promocional (se regeneran con store/play/video/componer_video.py)
+/store/play/video/tmp/
+# Grabaciones crudas del video (pesadas; viven solo en local)
+/store/play/video/fuente/

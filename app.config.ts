@@ -16,7 +16,7 @@ const config: ExpoConfig = {
     // Identificador en Play Store: NO se puede cambiar después de la primera publicación.
     package: 'mx.becaria.app',
     adaptiveIcon: {
-      backgroundColor: '#E6F4FE',
+      backgroundColor: '#FFFFFF',
       foregroundImage: './assets/android-icon-foreground.png',
       backgroundImage: './assets/android-icon-background.png',
       monochromeImage: './assets/android-icon-monochrome.png',
@@ -31,6 +31,8 @@ const config: ExpoConfig = {
     'expo-secure-store',
     'expo-web-browser',
     'expo-font',
+    // Logo de Becar.ia sobre blanco al abrir la app (origen: assets/brand/icono-original.jpg).
+    ['expo-splash-screen', { image: './assets/splash-icon.png', imageWidth: 140, backgroundColor: '#FFFFFF', resizeMode: 'contain' }],
     // Solo notificaciones locales (recordatorios de cierre); sin push ni alarmas exactas.
     ['expo-notifications', { color: '#FF7A33', icon: './assets/notification-icon.png' }],
   ],

@@ -158,6 +158,9 @@ const styles = StyleSheet.create({
     width: 36,
     height: 36,
     borderRadius: radius.full,
+    // Fondo desde el inicio (igual al de la tarjeta): en Android, si el fondo aparece después de
+    // montar (al seleccionar un día) se pierde el borderRadius y el día se veía cuadrado.
+    backgroundColor: colors.bg,
     alignItems: 'center',
     justifyContent: 'center',
   },
