@@ -69,5 +69,5 @@ Notas para no equivocarse:
 - [x] Capturas de pantalla (8, 1080×1920), ícono 512×512 y gráfico destacado 1024×500: todo en
       `store/play/` (`capturas/01-08.png`, `icono-512.png`, `grafico-destacado.png`). Se regeneran con
       `python store/play/componer.py` a partir de las capturas crudas de `store/play/fuente/`.
-- [ ] Borrar las cuentas de prueba que no se usen (`pruebas@`, `styveen.emiliano+becaria-test@`);
-      dejar `revision.play@` y las de validación.
+- [x] Cuentas de prueba borradas (2026-10-01). Quedan solo `revision.play@` (revisión de Google
+      Play, ya verificada) y `validador1-3@` (panel de validación).

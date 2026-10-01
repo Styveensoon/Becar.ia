@@ -112,6 +112,30 @@ const eliminar = pagina(
 <p>Más detalles en el <a href="privacidad.html">Aviso de Privacidad</a>.</p>`,
 );
 
+// Página que exige Play Store: cómo borrar algunos datos sin eliminar la cuenta.
+const eliminarDatos = pagina(
+  'Eliminar tus datos',
+  `<h1>Eliminar tus datos sin borrar tu cuenta</h1><p class="fecha">App: Becar.ia · Responsable: equipo de Becar.ia</p>
+<p>Puedes borrar o corregir parte de tus datos y seguir usando Becar.ia. Si prefieres borrarlo todo, consulta <a href="eliminar-cuenta.html">Eliminar tu cuenta</a>.</p>
+<div class="caja"><h2>Opción 1: desde la app (al instante)</h2><ul>
+<li><strong>Favoritos:</strong> toca el corazón de una convocatoria para quitarla. Sus recordatorios se cancelan solos.</li>
+<li><strong>Institución:</strong> en <strong>Perfil → Editar perfil</strong>, borra el texto del campo y guarda. Es opcional.</li>
+<li><strong>Apodo, avatar, color e intereses:</strong> cámbialos en <strong>Perfil → Editar perfil</strong>.</li>
+<li><strong>Avisos de convocatorias nuevas:</strong> apágalos en <strong>Perfil → Mis datos y privacidad</strong>.</li>
+<li><strong>Ver todo lo que guardamos:</strong> en <strong>Perfil → Mis datos y privacidad</strong> puedes revisar tus datos y descargar una copia.</li>
+</ul></div>
+<div class="caja"><h2>Opción 2: por correo</h2>
+<p>Escribe a <span class="correo">${esc(CORREO_CONTACTO)}</span> <strong>desde el correo con el que te registraste</strong>, con el asunto «Eliminar mis datos», tu apodo en la app y qué datos quieres que borremos.</p>
+<p>Te respondemos en un máximo de 20 días hábiles y, si procede, lo hacemos efectivo en un máximo de 15 días hábiles más. Es gratis.</p></div>
+<section><h2>Datos que solo se borran al eliminar la cuenta</h2><ul>
+<li>Tu correo y tu contraseña, porque con ellos entras a la app.</li>
+<li>Tu rango de edad y tu nivel educativo, porque sirven para mostrarte solo convocatorias a las que puedes aplicar. Puedes corregirlos en Editar perfil (el rango de edad solo puede subir).</li>
+<li>Al menos 2 intereses, que usamos para tus sugerencias.</li>
+<li>El registro de los términos que aceptaste, que la ley nos pide conservar mientras tengas cuenta.</li>
+</ul></section>
+<p>Más detalles en el <a href="privacidad.html">Aviso de Privacidad</a>.</p>`,
+);
+
 const inicio = pagina(
   'Legal y privacidad',
   `<h1>Becar.ia</h1><p class="fecha">Becas, concursos y programas para estudiantes, sin que se te pasen las fechas.</p>
@@ -119,6 +143,7 @@ const inicio = pagina(
 <a href="privacidad.html">Aviso de Privacidad</a>
 <a href="terminos.html">Términos y Condiciones</a>
 <a href="eliminar-cuenta.html">Eliminar tu cuenta</a>
+<a href="eliminar-datos.html">Eliminar tus datos sin borrar tu cuenta</a>
 </nav>
 <p>Contacto: <span class="correo">${esc(CORREO_CONTACTO)}</span></p>`,
 );
@@ -129,6 +154,7 @@ writeFileSync(new URL('index.html', docs), inicio);
 writeFileSync(new URL('privacidad.html', docs), privacidad);
 writeFileSync(new URL('terminos.html', docs), terminos);
 writeFileSync(new URL('eliminar-cuenta.html', docs), eliminar);
+writeFileSync(new URL('eliminar-datos.html', docs), eliminarDatos);
 // Sin Jekyll: GitHub Pages sirve los archivos tal cual.
 writeFileSync(new URL('.nojekyll', docs), '');
 console.log(`Páginas generadas en docs/ → ${WEB_BASE}/`);
