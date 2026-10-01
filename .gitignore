@@ -53,3 +53,5 @@ supabase/.temp/
 /store/play/video/tmp/
 # Grabaciones crudas del video (pesadas; viven solo en local)
 /store/play/video/fuente/
+# Pista de música en WAV (12 MB; se regenera igual con store/play/video/musica.py)
+/store/play/video/musica.wav
